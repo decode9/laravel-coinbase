@@ -1,12 +1,12 @@
-# laravel-kraken
-Kraken trading API for Laravel
+# laravel-coinbase
+Coinbase Wallet API for Laravel
 
 ## Install
 
 #### Install via Composer
 
 ```
-composer require decode9/laravel-kraken
+composer require decode9/laravel-coinbase
 ```
 
 Add the following lines to your `config/app.php`
@@ -14,17 +14,17 @@ Add the following lines to your `config/app.php`
 ```php
 'providers' => [
         ...
-        decode9\kraken\KrakenServiceProvider::class,
+        decode9\coinbase\CoinbaseServiceProvider::class,
         ...
     ],
 
 
  'aliases' => [
         ...
-        'Kraken' => decode9\kraken\KrakenAPIFacade::class,
+        'Kraken' => decode9\coinbase\CoinbaseAPIFacade::class,
     ],
 ```
 
 ## Version
 
-0.1.1!
+0.0.1
