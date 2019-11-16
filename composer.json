@@ -19,7 +19,7 @@
 	   },
 	"autoload": {
 		"psr-4": {
-			"decode9\\kraken\\": "src/"
+			"decode9\\coinbase\\": "src/"
 		}
 	}
 }
