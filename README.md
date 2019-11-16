@@ -21,7 +21,7 @@ Add the following lines to your `config/app.php`
 
  'aliases' => [
         ...
-        'Kraken' => decode9\coinbase\CoinbaseAPIFacade::class,
+        'Coinbase' => decode9\coinbase\CoinbaseAPIFacade::class,
     ],
 ```
 
