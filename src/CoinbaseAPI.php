@@ -142,7 +142,7 @@ class CoinbaseAPI
         $postdata = http_build_query($request, '', '&');
 
         // set API key and sign the message
-        $path = '/' . $this->version . '/private/' . $method ;
+        $path = '/' . $this->version . '/' . $method ;
 
         $pathSign = $path . '?' . $postdata;
         $body = '';
