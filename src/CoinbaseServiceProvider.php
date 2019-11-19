@@ -15,8 +15,8 @@ class CoinbaseServiceProvider extends ServiceProvider
 
 	public function register()
 	{
-		$this->mergeConfigFrom(__DIR__.'/config/coinbase.php', 'kraken');
-		$this->app->bind('kraken', function() {
+		$this->mergeConfigFrom(__DIR__.'/config/coinbase.php', 'coinbase');
+		$this->app->bind('coinbase', function() {
 			return new CoinbaseAPI(config('coinbase'));
 		});
 	}

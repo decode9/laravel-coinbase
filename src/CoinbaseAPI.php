@@ -74,22 +74,15 @@ class CoinbaseAPI
      * 
      * @return array of market depth pairs
      */
-    static function getSpotPrice($pair)
+    public function getSpotPrice($pair)
     {
         $method = 'prices/' . $pair . '/spot';
         return $this->queryPublic($method, [], false);
     }
 
-    public function depositAddress($symbol, $method = false)
+    public function getAccounts()
     {
-        if (!$method) {
-            $result = $this->queryPrivate("DepositMethods", ['asset' => $symbol]);
-            if (isset($result['result'])) {
-                $method = $result['result'][0]['method'];
-            }
-        }
-
-        return $this->queryPrivate("DepositAddresses", ['asset' => $symbol, 'method' => $method]);
+        return $this->queryPrivate("accounts");
     }
 
     /**
@@ -108,11 +101,14 @@ class CoinbaseAPI
         // make request
         if (!$type) {
             curl_setopt($this->curl, CURLOPT_POST, false);
+        } else {
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postdata);
+            curl_setopt($this->curl, CURLOPT_HTTPHEADER, array());
         }
-        curl_setopt($this->curl, CURLOPT_URL, $this->url . '/' . $this->version . '/public/' . $method);
-        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postdata);
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, array());
+
+        curl_setopt($this->curl, CURLOPT_URL, $this->url . '/' . $this->version . '/' . $method);
         $result = curl_exec($this->curl);
+
 
         if ($result === false) throw new Exception('CURL error: ' . curl_error($this->curl));
 
@@ -163,6 +159,7 @@ class CoinbaseAPI
         $result = curl_exec($this->curl);
 
         if ($result === false) throw new Exception('CURL error: ' . curl_error($this->curl), 0);
+
 
         // decode results
         $result = json_decode($result, true);
