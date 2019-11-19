@@ -29,7 +29,7 @@ class CoinbaseAPI
 
         $time = new DateTime();
 
-        if($host && $version != null && $version >= 0) {
+        if ($host && $version != null && $version >= 0) {
             $this->url = $config['coinbase_host'];
             $this->version = $config['coinbase_version'];
             $this->key = $config['coinbase_key'];
@@ -41,14 +41,17 @@ class CoinbaseAPI
 
         $this->curl = curl_init();
 
-        curl_setopt_array($this->curl, array(
-            CURLOPT_SSL_VERIFYPEER => $sslverify,
-            CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_USERAGENT => 'Coinbase PHP API Agent',
-            CURLOPT_POST => true,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CONNECTTIMEOUT => 20,
-            CURLOPT_TIMEOUT => 300)
+        curl_setopt_array(
+            $this->curl,
+            array(
+                CURLOPT_SSL_VERIFYPEER => $sslverify,
+                CURLOPT_SSL_VERIFYHOST => 2,
+                CURLOPT_USERAGENT => 'Coinbase PHP API Agent',
+                CURLOPT_POST => true,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_CONNECTTIMEOUT => 20,
+                CURLOPT_TIMEOUT => 300
+            )
         );
     }
 
@@ -58,20 +61,20 @@ class CoinbaseAPI
     }
 
     /**
-    * ---------- PUBLIC FUNCTIONS ----------
-    * getSpotPrice
-    * getAssetInfo
-    * getAssetPairs
-    * getOrderBook
-    * getTrades
-    */
+     * ---------- PUBLIC FUNCTIONS ----------
+     * getSpotPrice
+     * getAssetInfo
+     * getAssetPairs
+     * getOrderBook
+     * getTrades
+     */
 
     /**
      * Get trades
      * 
      * @return array of market depth pairs
      */
-    public function getSpotPrice($pair)
+    static function getSpotPrice($pair)
     {
         $method = 'prices/' . $pair . '/spot';
         return $this->queryPublic($method, [], false);
@@ -79,9 +82,9 @@ class CoinbaseAPI
 
     public function depositAddress($symbol, $method = false)
     {
-        if(!$method) {
+        if (!$method) {
             $result = $this->queryPrivate("DepositMethods", ['asset' => $symbol]);
-            if(isset($result['result'])) {
+            if (isset($result['result'])) {
                 $method = $result['result'][0]['method'];
             }
         }
@@ -89,7 +92,7 @@ class CoinbaseAPI
         return $this->queryPrivate("DepositAddresses", ['asset' => $symbol, 'method' => $method]);
     }
 
-	/**
+    /**
      * Query public methods
      *
      * @param string $method method name
@@ -103,7 +106,7 @@ class CoinbaseAPI
         $postdata = http_build_query($request, '', '&');
 
         // make request
-        if(!$type){
+        if (!$type) {
             curl_setopt($this->curl, CURLOPT_POST, false);
         }
         curl_setopt($this->curl, CURLOPT_URL, $this->url . '/' . $this->version . '/public/' . $method);
@@ -111,17 +114,17 @@ class CoinbaseAPI
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, array());
         $result = curl_exec($this->curl);
 
-        if($result === false) throw new Exception('CURL error: ' . curl_error($this->curl));
+        if ($result === false) throw new Exception('CURL error: ' . curl_error($this->curl));
 
         // decode results
         $result = json_decode($result, true);
 
-        if(!is_array($result)) throw new Exception('JSON decode error');
+        if (!is_array($result)) throw new Exception('JSON decode error');
 
         return $result;
     }
 
-	/**
+    /**
      * Query private methods
      *
      * @param string $path method path
@@ -131,7 +134,7 @@ class CoinbaseAPI
      */
     private function queryPrivate($method, array $request = array())
     {
-        if(!isset($request['nonce'])) {
+        if (!isset($request['nonce'])) {
             // generate a 64 bit nonce using a timestamp at microsecond resolution
             // string functions are used to avoid problems on 32 bit systems
             $nonce = explode(' ', microtime());
@@ -142,7 +145,7 @@ class CoinbaseAPI
         $postdata = http_build_query($request, '', '&');
 
         // set API key and sign the message
-        $path = '/' . $this->version . '/' . $method ;
+        $path = '/' . $this->version . '/' . $method;
 
         $pathSign = $path . '?' . $postdata;
         $body = '';
@@ -150,7 +153,7 @@ class CoinbaseAPI
         $headers = array(
             'CB-ACCESS-KEY: ' . $this->key,
             'CB-ACCESS-SIGN: ' . base64_encode($sign),
-            'CB-ACCESS-TIMESTAMP: ' . $this->time, 
+            'CB-ACCESS-TIMESTAMP: ' . $this->time,
         );
 
         // make request
@@ -158,13 +161,13 @@ class CoinbaseAPI
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postdata);
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);
         $result = curl_exec($this->curl);
-        
-        if($result===false) throw new Exception('CURL error: ' . curl_error($this->curl), 0);
+
+        if ($result === false) throw new Exception('CURL error: ' . curl_error($this->curl), 0);
 
         // decode results
         $result = json_decode($result, true);
 
-        if(!is_array($result)) throw new Exception('JSON decode error', 0);
+        if (!is_array($result)) throw new Exception('JSON decode error', 0);
 
         return $result;
     }
